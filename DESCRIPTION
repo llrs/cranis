@@ -1,0 +1,26 @@
+Package: cranis
+Title: Creates an Overview of CRAN Packages
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Lluís",
+           family = "Revilla Sancho",
+           role = c("cre", "aut"),
+           email = "lluis.revilla@gmail.com",
+           comment = c(ORCID = "0000-0001-9747-2570"))
+Description: It looks the packages available on the major
+    repositories.
+License: MIT + file LICENSE
+URL: https://github.com/llrs/cranis
+BugReports: https://github.com/llrs/cranis/issues
+Imports: 
+    BiocManager (>= 1.30.10),
+    reactable (>= 0.2.3)
+Suggests: 
+    knitr,
+    pkgdown,
+    rmarkdown
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1

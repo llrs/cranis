@@ -1,0 +1,87 @@
+---
+title: "Packages available"
+date: "`r format(Sys.time(), '%F %R UTC%z')`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Packages available}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE,
+  echo = FALSE
+)
+```
+
+The data in this table stems from available.packages().
+We update it every hour.
+
+Thanks to [cransyas](https://lockedata.github.io/cransays/articles/dashboard.html) for the idea and all their work!
+
+# Dashboard
+
+```{r get-data}
+available_packages <- cranis::take_snapshot()
+write.csv(available_packages, 
+          paste0("available-packages-", format(Sys.time(), "%Y%m%dT%H%M"), ".csv"),
+          row.names = FALSE,
+          quote = FALSE
+)
+```
+
+```{r}
+library("reactable")
+
+colours <- c(
+  "CRAN" = "#F8F3BA",
+  "BiocSoftware" = "#F8F3BA",
+  "BiocAnnotation"   = "#F1D9A1",
+  "BiocExperimental" = "#E5CADB",
+  "BiocWorkflow" = "#A5D6C8"
+)
+
+repo <- available_packages$Repository
+biocSoftware <- grepl(pattern = "^https://*.bioconductor.org/packages/.+/bioc/", x = repo)
+BiocAnnotation <- grepl(pattern = "^https://*.bioconductor.org/packages/.+/data/annotation/", x = repo)
+BiocExperimental <- grepl(pattern = "^https://*.bioconductor.org/packages/.+/data/experiment/", x = repo)
+BiocWorkflow <- grepl(pattern = "^https://*.bioconductor.org/packages/.+/workflows/", x = repo)
+repo[biocSoftware] <- "BiocSoftware"
+repo[BiocAnnotation] <- "BiocAnnotation"
+repo[BiocExperimental] <- "BiocExperimental"
+repo[BiocWorkflow] <- "BiocWorkflow"
+repo[!biocSoftware & !BiocAnnotation & !BiocExperimental & !BiocWorkflow] <- "CRAN"
+ap <- available_packages
+ap$Repository <- repo
+rownames(ap) <- NULL
+reactable(ap[, c("Package", "Version", "License", "Repository")],
+    columns = list(
+      Repository = colDef(style = function(value) {
+        val <- as.character(value)
+        if (val %in% names(colours)) {
+          list(background = colours[[val]])
+        } else {
+          list()
+        }
+      })
+    ),
+    filterable = TRUE,
+    defaultPageSize = 50
+  )
+```
+
+## Session info
+
+<details>
+
+So meta:
+
+```{r session_info}
+sessionInfo()
+```
+
+\<\details\>
