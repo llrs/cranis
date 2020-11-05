@@ -27,11 +27,6 @@ Thanks to [cransyas](https://lockedata.github.io/cransays/articles/dashboard.htm
 
 ```{r get-data}
 available_packages <- cranis::take_snapshot()
-write.csv(available_packages, 
-          paste0("available-packages-", format(Sys.time(), "%Y%m%dT%H%M"), ".csv"),
-          row.names = FALSE,
-          quote = FALSE
-)
 ```
 
 ```{r}

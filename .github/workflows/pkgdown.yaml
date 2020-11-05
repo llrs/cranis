@@ -1,0 +1,78 @@
+on:
+  schedule:
+    cron:  '0 * * * *'
+  push:
+    branches:
+      - main
+      - master
+
+name: pkgdown
+
+jobs:
+  pkgdown:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: r-lib/actions/setup-r@v1
+
+      - uses: r-lib/actions/setup-pandoc@v1
+
+      - name: Query dependencies
+        run: |
+          install.packages('remotes')
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
+        shell: Rscript {0}
+
+      - name: Cache R packages
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+
+      - name: Install dependencies
+        run: |
+          remotes::install_deps(dependencies = TRUE)
+          install.packages("pkgdown", type = "binary")
+        shell: Rscript {0}
+
+      - name: Install package
+        run: R CMD INSTALL .
+
+      - name: Deploy package
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
+      - name: Store update
+        run: |
+            available_packages <- cranis::take_snapshot()
+            write.csv(available_packages,
+            paste0("available-packages-", format(Sys.time(), "%Y%m%dT%H%M"), ".csv"),
+            row.names = FALSE, quote = FALSE)
+        shell: Rscript {0}
+      - name: Save artifact
+        use: actions/artifact@v2
+        with:
+          name: update
+          path: available-packages-*.csv
+      - name: Download artifact
+        uses: actions/checkout@v2
+        with:
+          branch: history
+        uses: actions/download-artifact@v2
+        with: update
+      - name: Push artifact
+        uses: github-actions-x/commit@v2.7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          push-branch: 'history'
+          commit-message: 'Update'
+          force-add: 'true'
+          files: available-packages-*.csv
+          name: GitHub Actions
+          email: actions@github.com
