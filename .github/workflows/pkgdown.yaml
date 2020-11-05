@@ -6,7 +6,7 @@ on:
       - main
       - master
 
-name: pkgdown
+name: Pkgdown
 
 jobs:
   pkgdown:
@@ -21,7 +21,7 @@ jobs:
       - uses: r-lib/actions/setup-pandoc@v1
 
       - name: System dependencies
-        run: sudo apt-get install libcurl4-openssl-dev
+        run: sudo apt-get install libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev
 
       - name: Query dependencies
         run: |
@@ -59,16 +59,18 @@ jobs:
             row.names = FALSE, quote = FALSE)
         shell: Rscript {0}
       - name: Save artifact
-        use: actions/artifact@v2
+        uses: actions/artifact@v2
         with:
           name: update
           path: available-packages-*.csv
-      - name: Download artifact
+      - name: Checkout to history branch
         uses: actions/checkout@v2
         with:
           branch: history
+      - name: Download artifact
         uses: actions/download-artifact@v2
-        with: update
+        with:
+          name: update
       - name: Push artifact
         uses: github-actions-x/commit@v2.7
         with:
