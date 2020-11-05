@@ -7,12 +7,12 @@ on:
       - master
 
 name: Pkgdown
+env:
+  GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   pkgdown:
     runs-on: ubuntu-latest
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
 
@@ -59,7 +59,7 @@ jobs:
             row.names = FALSE, quote = FALSE)
         shell: Rscript {0}
       - name: Save artifact
-        uses: actions/artifact@v2
+        uses: actions/upload-artifact@v2
         with:
           name: update
           path: available-packages-*.csv
