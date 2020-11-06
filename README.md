@@ -20,17 +20,18 @@ remotes::install_github("llrs/cranis")
 
 ## Example
 
-This is a basic example :
+This is all the package does:
 
 ``` {.r}
 packages_available <- cranis::take_snapshot()
 ```
 
-The vignette produces a [handy dashboard](https://llrs.github.io/articles/dashboard.html) that we update every hour via [GitHub Actions](https://github.com/llrs/cranis/actions).
+The vignette produces a [handy dashboard](https://llrs.github.io/cranis/articles/dashboard.html) that is updated every hour via [GitHub Actions](https://github.com/llrs/cranis/actions).
 
 ## Related work
 
 -   Idea adapted from [cransays](https://cransays.itsalocke.com/) and github actions adapted from there.
+-   You can have RSS feeds from [CRANberris](http://dirk.eddelbuettel.com/cranberries/) which updated every two hours.
 
 ## Contributing
 
