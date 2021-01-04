@@ -55,8 +55,8 @@ jobs:
         run: |
             available_packages <- cranis::take_snapshot()
             write.csv(available_packages,
-            paste0("available-packages-", format(Sys.time(), "%Y%m%dT%H%M"), ".csv"),
-            row.names = FALSE, quote = FALSE)
+            file = paste0("available-packages-", format(Sys.time(), "%Y%m%dT%H%M"), ".csv"),
+            row.names = FALSE, quote = TRUE)
         shell: Rscript {0}
       - name: Save artifact
         uses: actions/upload-artifact@v2
