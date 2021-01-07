@@ -1,4 +1,4 @@
-# cransays
+# cranis
 
 <!-- badges: start -->
 
