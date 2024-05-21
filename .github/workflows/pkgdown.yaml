@@ -41,7 +41,8 @@ jobs:
         shell: Rscript {0}
 
       - name: Change user profile
-        shell: git config user.name 'github-actions[bot]' && git config user.email 'github-actions[bot]@users.noreply.github.com'
+        run: git config user.name 'github-actions[bot]' && git config user.email 'github-actions[bot]@users.noreply.github.com'
+        shell: {0}
         
       - name: Deploy to GitHub pages 🚀
         if: github.event_name != 'pull_request'
